@@ -6,16 +6,34 @@ ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+mouse = {
+    x: canvas.width/2,
+    y: canvas.height/2
+}
+
+function calculateDistance(x1,y1,x2,y2){
+    return Math.sqrt(Math.pow(y2-y1,2)+Math.pow(x2-x1,2))
+}
+
+function calculateDistancePure(x1,y1,x2,y2){
+    return Math.sqrt(Math.pow(y2-y1,2)+Math.pow(x2-x1,2))
+}
+
 addEventListener('resize', ()=>{
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+})
+
+addEventListener('mousemove', event=>{
+    mouse.x = event.clientX
+    mouse.y = event.clientY
 })
 
 const wave = {
     y: canvas.height/2,
     wavelength: 100,
     amplitude: 100,
-    frequency: 0.15,
+    frequency: 0.1,
     hue: 0,
 }
 
@@ -35,13 +53,31 @@ let increment = wave.frequency;
 function animate(){
     requestAnimationFrame(animate);
 
+    let mouseRadius = 100;
+
     ctx.fillStyle = 'rgba(0,0,0,0.1)'
     ctx.fillRect(0,0,canvas.width,canvas.height)
     ctx.beginPath();
     ctx.strokeStyle = '#feddee';
     for(let i = 0; i<canvas.width; i++){
-        ctx.lineTo(i, wave.y+ Math.sin(i/wave.wavelength+increment)*wave.amplitude);
+        if(mouse.y<wave.y){
+            if(calculateDistance(mouse.x, mouse.y, i, wave.y + Math.sin(i/wave.wavelength+increment)*wave.amplitude)<=mouseRadius){
+                ctx.lineTo(i, wave.y + Math.sin(i/wave.wavelength+increment)*wave.amplitude + mouseRadius/2);
+            }
+            else{
+                ctx.lineTo(i, wave.y + Math.sin(i/wave.wavelength+increment)*wave.amplitude);
+            }
+        }else{
+            if(calculateDistance(mouse.x, mouse.y, i, wave.y + Math.sin(i/wave.wavelength+increment)*wave.amplitude)<=mouseRadius){
+                ctx.lineTo(i, wave.y + Math.sin(i/wave.wavelength+increment)*wave.amplitude - mouseRadius/2);
+            }
+            else{
+                ctx.lineTo(i, wave.y + Math.sin(i/wave.wavelength+increment)*wave.amplitude);
+            }
+        }
+        
     }
+    
 
     ctx.strokeStyle = `hsla(${wave.hue}, 50%, 50%)`;
     ctx.stroke();
