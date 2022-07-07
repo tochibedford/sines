@@ -32,9 +32,11 @@ addEventListener('mousemove', event=>{
 const wave = {
     y: canvas.height/2,
     wavelength: 100,
-    amplitude: 100,
-    frequency: 0.1,
-    hue: 0,
+    amplitude: -398,
+    frequency: 0.05,
+    hue: 196,
+    saturation: 80,
+    light: 50
 }
 
 const waveFolder = gui.addFolder('wave')
@@ -45,7 +47,9 @@ waveFolder.add(wave, 'frequency', 0.01, 1);
 waveFolder.open();
 
 const strokeFolder = gui.addFolder('stroke');
-strokeFolder.add(wave, 'hue', 0, 255);
+strokeFolder.add(wave, 'hue', 0, 360);
+strokeFolder.add(wave, 'saturation', 0, 100);
+strokeFolder.add(wave, 'light', 0, 100);
 strokeFolder.open();
 
 let increment = wave.frequency;
@@ -79,7 +83,7 @@ function animate(){
     }
     
 
-    ctx.strokeStyle = `hsla(${wave.hue}, 50%, 50%)`;
+    ctx.strokeStyle = `hsla(${wave.hue}, ${wave.saturation}%, ${wave.light}%)`;
     ctx.stroke();
     increment += wave.frequency
 }
